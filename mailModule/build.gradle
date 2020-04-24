@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+}
+
+group 'csdnToMd'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':html2md')
+    compile 'org.springframework.boot:spring-boot-starter-web'//使用Spring MVC构建web 工程，包含restful，默认使用Tomcat容器。
+    compile 'org.springframework.boot:spring-boot-starter-json' //提供对JSON的读写支持。
+    compile 'com.google.code.gson:gson:2.8.0'
+    //引入lombok依赖
+    //@Data注解在类上，会为类的所有属性自动生成setter/getter、equals、canEqual、hashCode、toString方法，如为final属性，则不会为该属性生成setter方法。
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

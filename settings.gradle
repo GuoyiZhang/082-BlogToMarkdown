@@ -1,0 +1,4 @@
+rootProject.name = 'BlogToMarkdown'
+include 'mailModule'
+include 'html2md'
+

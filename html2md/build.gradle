@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+}
+
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'pmd'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+apply from: 'dependencies.gradle'
+
+
+group 'csdnToMd'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+pmd {
+    ruleSetFiles = files("config/pmd/pmd-ruleset.xml")
+}
+
+checkstyle {
+    toolVersion = versions.checkstyle
+}
+
+findbugs {
+    includeFilter = file("$rootProject.projectDir/config/findbugs/findbugs-config.xml")
+    excludeFilter = file("$rootProject.projectDir/config/findbugs/findbugs-excludes.xml")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+test {
+    jacoco {
+        append = true
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile(libs.jsoup)
+    //引入lombok依赖
+    //@Data注解在类上，会为类的所有属性自动生成setter/getter、equals、canEqual、hashCode、toString方法，如为final属性，则不会为该属性生成setter方法。
+    annotationProcessor 'org.projectlombok:lombok:1.18.2'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+
+
+    testCompile(libs.http_builder)
+    testCompile(libs.mockito)
+    testCompile(libs.checkstyle)
+    testCompile(libs.groovy)
+    testCompile(libs.junit)
+    testCompile(libs.spock)
+    testCompile(libs.mockito)
+}

@@ -8,6 +8,8 @@ import pro.guoyi.blog.utils.request.RestClientUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author guoyi
@@ -39,7 +41,24 @@ public class BlogExport {
                             System.out.println(">>>开始导出：" + blog.getTitle());
                             String uri = "https://blog.csdn.net/" + Config.userName + "/article/details/" + blog.getArticleId();
                             url = new URL(uri);
-                            String convert = "# " + blog.getTitle() + "\n\n" + HTML2Md.convertById(url, 2000, "content_views");
+                            HashMap<String, Object> map = HTML2Md.convertById(url, 2000, "content_views");
+                            String convert = "";
+                            // ArticleInfo articleInfo = RestClientUtils.get("https://bizapi.csdn.net/blog-console-api/v1/editor/getArticle?id=" + blog.getArticleId(), Config.cookie, ArticleInfo.class);
+                            ArrayList<String> tags = (ArrayList<String>) map.get("tags");
+                            convert = "---\n" +
+                                    "layout:     post\n" +
+                                    "title:      " + blog.getTitle() + "\n" +
+                                    "subtitle:   " + blog.getTitle() + "\n" +
+                                    "date:       " + blog.getPostTime() + "\n" +
+                                    "author:     Sunny day\n" +
+                                    "header-img: img/post-bg-ios9-web.jpg\n" +
+                                    "catalog: true\n" +
+                                    "tags:\n";
+                            for (String s : tags) {
+                                convert = convert + "    - " + s + "\n";
+                            }
+                            convert = convert + "---\n\n>" + blog.getTitle() + "\n\n";
+                            convert = convert + "# " + blog.getTitle() + "\n\n" + map.get("document");
 
                             String postTime = blog.getPostTime();
                             String year = null;

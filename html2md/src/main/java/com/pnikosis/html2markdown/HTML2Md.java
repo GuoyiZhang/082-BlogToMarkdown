@@ -1,17 +1,6 @@
 package com.pnikosis.html2markdown;
 
 import com.pnikosis.html2markdown.MDLine.MDLineType;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,6 +10,13 @@ import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Tag;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Convert Html to MarkDown
@@ -40,9 +36,20 @@ public class HTML2Md {
         return parseDocument(doc);
     }
 
-    public static String convertById(URL url, int timeoutMillis, String id) throws IOException {
+    public static HashMap<String, Object> convertById(URL url, int timeoutMillis, String id) throws IOException {
         Document doc = Jsoup.parse(url, timeoutMillis);
-        return parseDocumentById(doc, id);
+        String document = parseDocumentById(doc, id);
+
+        Elements elementsByClass = doc.getElementsByClass("blog-tags-box");
+        Elements elementsByClass1 = elementsByClass.get(0).getElementsByClass("tag-link");
+        ArrayList<String> tags = new ArrayList<>();
+        for (Node node : elementsByClass1) {
+            tags.add(node.childNode(0).toString());
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("document", document);
+        map.put("tags", tags);
+        return map;
     }
 
     public static String convertHtml(String html, String charset) throws IOException {
@@ -135,7 +142,7 @@ public class HTML2Md {
         indentation = -1;
 
         Element doc = dirtyDoc.getElementById(id);
-            return getTextContent(doc);
+        return getTextContent(doc);
     }
 
 

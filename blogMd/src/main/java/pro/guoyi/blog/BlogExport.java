@@ -41,19 +41,35 @@ public class BlogExport {
                             url = new URL(uri);
                             String convert = "# " + blog.getTitle() + "\n\n" + HTML2Md.convertById(url, 2000, "content_views");
 
+                            String postTime = blog.getPostTime();
+                            String year = null;
+                            String mouth = null;
+                            String day = null;
+                            try {
+                                year = postTime.split("-")[0];
+                                mouth = postTime.split("-")[1];
+                                day = postTime.split("-")[2].split(" ")[0];
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            blog.setTitle(blog.getTitle().replace("/", " "));
+
                             //输出到文件
                             //ID命名
                             //FilesUtil.newFile("blog/md/" + uri.split("details/")[1] + ".md", convert);
-                            //文章名命名
-                            FilesUtil.newFile("blog/md/" + blog.getTitle() + ".md", convert);
-
+                            if (year != null && mouth != null && day != null) {
+                                //文章名命名
+                                FilesUtil.newFile("blog/md/" + year + "-" + mouth + "-" + day + "-" + blog.getTitle() + ".md", convert);
+                            } else {
+                                FilesUtil.newFile("blog/md/" + blog.getTitle() + ".md", convert);
+                            }
                             count++;
                             System.out.println(">>>完成导出：" + blog.getTitle() + "<<<");
-                            System.out.println("现已导出文章" + count + "篇\n");
+                            System.out.println("共" + blogList.getData().getCount().getEnable() + "篇文章，现已导出文章" + count + "篇\n");
                         }
                     }
                 } else {
-                    System.out.println("文章导出完毕，本次共导出：" + count + "篇文章");
+                    System.out.println("文章导出完毕，共" + blogList.getData().getCount().getEnable() + "篇文章，本次共导出：" + count + "篇文章");
                     return;
                 }
             }

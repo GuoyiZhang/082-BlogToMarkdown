@@ -30,30 +30,24 @@ public class BlogExport {
                         for (BlogList.DataBean.ListBean blog : blogList.getData().getList()) {
                             //审核失败文章，审核失败是无法导出的
                             if (blog.getStatus().equals("6")) {
-                                continue;
+                                System.out.println("1111111");
+//                                continue;
                             }
                             //私密文章，私密文章暂时也无法导出
                             if (blog.getStatus().equals("64")) {
-                                continue;
+                                System.out.println("22222222");
+//                                continue;
                             }
 
                             //开始导出解析HTML，并转换成Markdown字符串
                             System.out.println(">>>开始导出：" + blog.getTitle());
                             String uri = "https://blog.csdn.net/" + Config.userName + "/article/details/" + blog.getArticleId();
                             url = new URL(uri);
-                            HashMap<String, Object> map = HTML2Md.convertById(url, 2000, "content_views");
+                            HashMap<String, Object> map = HTML2Md.convertById(url, blog.getStatus(), Config.cookie, 2000, "content_views");
                             String convert = "";
                             // ArticleInfo articleInfo = RestClientUtils.get("https://bizapi.csdn.net/blog-console-api/v1/editor/getArticle?id=" + blog.getArticleId(), Config.cookie, ArticleInfo.class);
                             ArrayList<String> tags = (ArrayList<String>) map.get("tags");
-                            convert = "---\n" +
-                                    "layout:     post\n" +
-                                    "title:      " + blog.getTitle() + "\n" +
-                                    "subtitle:   " + blog.getTitle() + "\n" +
-                                    "date:       " + blog.getPostTime() + "\n" +
-                                    "author:     Sunny day\n" +
-                                    "header-img: img/post-bg-ios9-web.jpg\n" +
-                                    "catalog: true\n" +
-                                    "tags:\n";
+                            convert = "---\n" + "layout:     post\n" + "title:      " + blog.getTitle() + "\n" + "subtitle:   " + blog.getTitle() + "\n" + "date:       " + blog.getPostTime() + "\n" + "author:     Sunny day\n" + "header-img: img/post-bg-ios9-web.jpg\n" + "catalog: true\n" + "tags:\n";
                             for (String s : tags) {
                                 convert = convert + "    - " + s + "\n";
                             }

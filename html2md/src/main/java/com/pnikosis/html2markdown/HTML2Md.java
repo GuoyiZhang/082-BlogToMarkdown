@@ -1,7 +1,9 @@
 package com.pnikosis.html2markdown;
 
 import com.pnikosis.html2markdown.MDLine.MDLineType;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
@@ -36,8 +38,15 @@ public class HTML2Md {
         return parseDocument(doc);
     }
 
-    public static HashMap<String, Object> convertById(URL url, int timeoutMillis, String id) throws IOException {
-        Document doc = Jsoup.parse(url, timeoutMillis);
+    public static HashMap<String, Object> convertById(URL url, String status, String cookie, int timeoutMillis, String id) throws IOException {
+        Document doc;
+        if (status.equals("64") || status.equals("6")) {
+            Connection con = HttpConnection.connect(url);
+            if (!cookie.isEmpty()) con.header("cookie", cookie);
+            con.timeout(timeoutMillis);
+            doc = con.get();
+        } else
+            doc = Jsoup.parse(url, timeoutMillis);
         String document = parseDocumentById(doc, id);
 
         Elements elementsByClass = doc.getElementsByClass("blog-tags-box");
